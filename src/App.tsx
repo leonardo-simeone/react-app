@@ -8,8 +8,32 @@ import { BsHeart } from "react-icons/bs";
 import Like from "./components/Like";
 import ExpandableText from "./components/ExpandableText";
 import Form from "./components/Form";
+import ExpenseList from "./expense-tracker/components/ExpenseList";
+import ExpenseFilter from "./expense-tracker/components/ExpenseFilter";
+import ExpenseForm from "./expense-tracker/components/ExpenseForm";
+
+export const categories = ["Gorceries", "Utilities", "Entertainment"];
 
 function App() {
+  // MINI PROJECT EXPENSE LIST
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const [expenses, setExpenses] = useState([
+    { id: 1, description: "aaa", amount: 10, category: "Utilities" },
+    { id: 2, description: "bbb", amount: 10, category: "Utilities" },
+    { id: 3, description: "ccc", amount: 10, category: "Utilities" },
+    { id: 4, description: "ddd", amount: 10, category: "Utilities" },
+  ]);
+
+  // dummy data
+  // const expenses = [
+  //   { id: 1, description: "aaa", amount: 10, category: "Utilities" },
+  //   { id: 2, description: "bbb", amount: 10, category: "Utilities" },
+  //   { id: 3, description: "ccc", amount: 10, category: "Utilities" },
+  //   { id: 4, description: "ddd", amount: 10, category: "Utilities" },
+  // ];
+
   // EXERCISE UPDATE STATE OBJECT
   // const [game, setGame] = useState({
   //   id: 1,
@@ -85,9 +109,30 @@ function App() {
   //   setGame({ ...game, player: { ...game.player, name: "Bob" } });
   // };
 
+  // THIS LOCAL VARIABLE (visibleExpenses) IS USED TO HOLD THE VALUE OF THE SELECTED EXPENSES ONLY, NOT ALL THE EXPENSES
+  // THE LOGIC DICTATES IF selectedCategory (truethy) THEN WE FILTER THE EXPENSES OBJECT TO SHOW ONLY THE CATEGORY IN THE EXPENSES OBJECT THAT WAS SELECTED
+  // OTHERWISE WE SHOW ALL THE CATEGORIES IN THE EXPENSES OBJECT
+  // WE DIDN'T USE ANOTHER STATE VARIABLE HERE BECAUSE WE CAN COMPUTE THE RESULT BASED ON THE EXISTING STATE VARIABLES
+  // LIKE selectedCategory AND expenses
+  const visibleExpenses = selectedCategory
+    ? expenses.filter((e) => e.category === selectedCategory)
+    : expenses;
+
   return (
     <div>
-      <Form></Form>
+      <div className="mb-5">
+        <ExpenseForm></ExpenseForm>
+      </div>
+      <div className="mb-3">
+        <ExpenseFilter
+          onSelectCategory={(category) => setSelectedCategory(category)}
+        ></ExpenseFilter>
+      </div>
+      <ExpenseList
+        expenses={visibleExpenses} // HERE WE PASS THE LOCAL VARIABLE TO OUR EXPENSE LIST COMPONENTS
+        onDelete={(id) => setExpenses(expenses.filter((e) => e.id !== id))} // IN onDelete FUNCTION WE WRITE AN ARROW FUNCTION IN THE setExpenses (UPDATER FUNCTION) THAT FILTERS THE EXPENSES OBJECT AND RETURNS THE OBJECT WITHOUT EXPENSE WITH THE id IN THE ARGUMENT
+      ></ExpenseList>
+      {/* <Form></Form> */}
       {/* <ExpandableText>Hello World!</ExpandableText> */}
       {/* {alertVisible && (
         <Alert onClose={() => setAlertVisibility(false)}>My alert</Alert>
